@@ -202,6 +202,71 @@ public class Graphs {
 		}
 	}
 	
+	public static boolean DFSwithNoDeadEnds()
+	{
+		// Lets grab stuff from the console..
+		Scanner sc = new Scanner(System.in); 
+		// this define the size of the matrix
+		int NumOfVertexes  = sc.nextInt();
+		// create adjacent matrix representing the graph
+		boolean[][] graph = initializedMatrix(NumOfVertexes);
+		int NumOfEdges = sc.nextInt();
+		// Capture start ad end
+		int start = map.get(sc.next());
+		int end = map.get(sc.next());
+		boolean t = true;
+		// add connections between nodes
+		for(int i=0;i<NumOfEdges;i++)
+		{
+			int r = map.get(sc.next());
+			int c = map.get(sc.next());
+			// if Node A is connected to node B [A][B] is true
+			// since is a non directed graph    [B][A] is also true
+			graph[r][c] = t;
+			graph[c][r] = t;
+		}
+		sc.close();
+		ArrayList<String> my_keys = new ArrayList<String>();
+		for(String my_key : map.keySet())
+		{
+			my_keys.add(my_key);
+		}
+		Collections.sort(my_keys);
+		// DFS algorithm
+		ArrayDeque<Integer> pendingNodes = new ArrayDeque<Integer>();
+		boolean[] processed = new boolean[graph.length];
+		pendingNodes.push(start);
+		//DFS
+		while(!pendingNodes.isEmpty())
+		{
+			int node = pendingNodes.pop(); // DFS
+			//int node = pendingNodes.poll(); //BFS
+			if(node==end)
+			{
+				System.out.print(my_keys.get(node));
+				return true;
+			}
+			System.out.print(my_keys.get(node));
+			if(!processed[node])
+			{
+				processed[node] = true;
+				for(int i=0;i<graph[node].length;i++)
+				{	// NODE has to be connected either with start or end to be pushed
+					// this way avoids dead ends
+					if(graph[start][i] || graph[end][i])
+					{
+						if(graph[node][i] && !processed[i])
+						{
+							pendingNodes.push(i);//DFS
+						}
+					}
+				}// END FOR
+			}
+		}// end while cycle
+		return false;
+	}
+
+	
 	public static void main(String[] args) 
 	{
 		boolean t = true, f = false;
@@ -222,8 +287,9 @@ public class Graphs {
                               { f, f, f, f, t, f, f },
                               { f, f, f, t, f, f, f }
                     };
-        //System.out.println(DFS(graph2,0,5));
-        isThereAPath();
+        // below the two functions of the homework
+        //isThereAPath();
+        //DFSwithNoDeadEnds();
 	}
 
 }
